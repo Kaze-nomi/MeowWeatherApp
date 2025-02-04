@@ -173,7 +173,7 @@ const appWeatherApp = (containerId, params = {}) => {
                 fetchCurrentWeather(city),
                 fetchHourlyForecast(city)
             ]);
-            // fetchHistoricalData();
+            fetchHistoricalData();
             updateUI(currentData, forecastData);
         } catch (err) {
             console.error(err);
