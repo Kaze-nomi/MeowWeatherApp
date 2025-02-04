@@ -39,7 +39,8 @@ const appWeatherApp = (containerId, params = {}) => {
         document.getElementById('weatherConditionsText').textContent = conditions.charAt(0).toUpperCase() + conditions.slice(1);
 
         document.getElementById('activity-recommendations').style.display = "none";
-        document.getElementById('loading').style.display = "block; flex";
+        document.getElementById('loading').style.display = "block";
+        document.getElementById('loading').style = "flex";
 
         // Устанавливаем GIF по погоде
         const weatherID = currentData.weather[0].id;
