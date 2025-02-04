@@ -79,7 +79,7 @@ app.post('/proxy/gpt', async (req, res) => {
     - Скорость ветра: ${currentData.wind.speed.toFixed(1)} м/с,
     - Влажность: ${currentData.main.humidity}%,
     - Местоположение: ${currentData.name},
-    - Дата и время: ${new Date(currentData.dt * 1000).toUTCString()}.
+    - Дата и время в формате UTC: ${new Date(currentData.dt * 1000).toUTCString()}.
     
     Через 3 часа:
     - Температура: ${forecastData.list[1].main.temp}°C,

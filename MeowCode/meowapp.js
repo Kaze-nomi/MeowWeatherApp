@@ -62,12 +62,12 @@ const appWeatherApp = (containerId, params = {}) => {
             // Дождь (500-531)
             case (weatherID >= 500 && weatherID <= 531):
                 if (weatherID === 511) svgFile = 'sleet.svg'; // Ледяной дождь
-                else svgFile = `partly-cloudy${iconSuffix === 'day' ? '' : '-night'}-rain.svg`;
+                else svgFile = `partly-cloudy${iconSuffix === 'day' ? '-day' : '-night'}-rain.svg`;
                 break;
 
             // Снег (600-622)
             case (weatherID >= 600 && weatherID <= 622):
-                svgFile = `snow${iconSuffix === 'day' ? '' : '-night'}.svg`;
+                svgFile = `partly-cloudy${iconSuffix === 'day' ? '-day' : '-night'}-snow.svg`;
                 break;
 
             // Атмосферные явления (701-781)
