@@ -62,7 +62,7 @@ const appWeatherApp = (containerId, params = {}) => {
             // Дождь (500-531)
             case (weatherID >= 500 && weatherID <= 531):
                 if (weatherID === 511) svgFile = 'sleet.svg'; // Ледяной дождь
-                else svgFile = `rain${iconSuffix === 'day' ? '' : '-night'}.svg`;
+                else svgFile = `partly-cloudy${iconSuffix === 'day' ? '' : '-night'}-rain.svg`;
                 break;
 
             // Снег (600-622)
@@ -173,8 +173,8 @@ const appWeatherApp = (containerId, params = {}) => {
                 fetchCurrentWeather(city),
                 fetchHourlyForecast(city)
             ]);
-            fetchHistoricalData();
             updateUI(currentData, forecastData);
+            fetchHistoricalData();
         } catch (err) {
             console.error(err);
             alert('Не удалось загрузить погоду. Проверьте название города или API-ключ.');
