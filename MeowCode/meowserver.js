@@ -56,6 +56,15 @@ app.post('/proxy/gpt', async (req, res) => {
         return res.status(400).json({ error: 'GigaChatKey and currentData/forecastData are required' });
     }
 
+    const date = new Date((forecastData.list[0].dt + forecastData.city.timezone) * 1000);
+    const day = date.getDate().toString().padStart(2, '0');
+    const months = ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"];
+    const month = months[date.getMonth()];
+    const hours = date.getUTCHours().toString().padStart(2, '0');
+    const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+    const time = `${hours}:${minutes}`; 
+
+
     const url = "https://gigachat.devices.sberbank.ru/api/v1/chat/completions";
 
     const headers = {
@@ -79,13 +88,14 @@ app.post('/proxy/gpt', async (req, res) => {
     - Скорость ветра: ${currentData.wind.speed.toFixed(1)} м/с,
     - Влажность: ${currentData.main.humidity}%,
     - Местоположение: ${currentData.name},
-    - Дата и время в формате UTC: ${new Date(currentData.dt * 1000).toUTCString()}.
+    - Текущее время: ${time},
+    - Дата: ${day} ${month}.
     
     Через 3 часа:
     - Температура: ${forecastData.list[1].main.temp}°C,
     - Погодные условия: ${forecastData.list[1].weather[0].description}.
     
-    Предложи, чем можно заняться, учитывая эти условия. Ответ должен быть кратким (3-4 предложения) и не содержать обоснований или извинений. В твоём ответе ты не должен повторять температуру или ветер. Желательно, чтобы ты упомянул особенности города или места откуда идёт запрос.`
+    Предложи, чем можно заняться, учитывая эти условия. Ответ должен быть кратким (3-4 предложения) и не содержать обоснований или извинений. В твоём ответе ты не должен повторять температуру или ветер. Желательно, чтобы ты упомянул особенности города или места откуда идёт запрос. Учитывай дату и время в текущем регионе.`
             }
         ],
         "stream": false,
