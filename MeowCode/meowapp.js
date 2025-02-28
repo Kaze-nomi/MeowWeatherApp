@@ -39,8 +39,14 @@ const appWeatherApp = (containerId, params = {}) => {
         document.getElementById('weatherConditionsText').textContent = conditions.charAt(0).toUpperCase() + conditions.slice(1);
 
         document.getElementById('activity-recommendations').style.display = "none";
-        document.getElementById('loading').style.display = "block";
-        document.getElementById('loading').style = "flex";
+        document.getElementById('historyChart').style.display = "none";
+        
+        document.getElementById('loading').style.display = "flex";
+
+        const loadingElement = document.getElementById('loading-h');
+        loadingElement.style.display = "flex";
+        loadingElement.style.justifyContent = "center";
+        loadingElement.style.alignItems = "center";
 
         // Устанавливаем GIF по погоде
         const weatherID = currentData.weather[0].id;
@@ -300,7 +306,6 @@ const appWeatherApp = (containerId, params = {}) => {
             forecastShortContainer.style.display = 'none';
             chartContainer.style.display = 'block';
             chartContainer.style.background = 'rgba(255, 255, 255, 0)';
-            renderChart(historyData);
         }
     });
 
@@ -342,9 +347,13 @@ const appWeatherApp = (containerId, params = {}) => {
             console.error(error);
             alert('Не удалось получить исторические данные.');
         }
+        renderChart(historyData);
     }
 
     function renderChart(dailyData) {
+          document.getElementById('loading-h').style.display = "none";
+          document.getElementById('historyChart').style.display = "block";
+          
           const time = dailyData.time;
           const temperature_2m_max = dailyData.temperature_2m_max;
           const temperature_2m_min = dailyData.temperature_2m_min;

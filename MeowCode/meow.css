@@ -1,0 +1,419 @@
+body {
+    background: linear-gradient(135deg, #5b3c74, #aa8ed6);
+    color: white;
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Основной контейнер приложения */
+  .weather-app {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  body.light-theme {
+    color: #333;
+  }
+
+  body.light-theme .weather-app {
+    background: rgba(255, 255, 255, 0.8);
+    border-color: rgba(0, 0, 0, 0.1);
+  }
+
+  body.light-theme input,
+  body.light-theme button {
+    color: #333;
+    border-color: rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.05);
+
+  }
+
+  body.light-theme .active {
+    color: #333;
+    border-color: rgba(0, 0, 0, 0.5) !important;
+    background: rgba(0, 0, 0, 0.1) !important;
+  }
+
+  body.light-theme #regionText {
+    color: #333;
+    background: rgba(0, 0, 0, 0.05);
+
+  }
+
+  body.light-theme .file-input-wrapper   {
+    color: #333;
+    border-color: rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  body.light-theme .forecast-item,
+  body.light-theme .box {
+    background: rgba(0, 0, 0, 0.05);
+
+  }
+
+  input,
+  button {
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+  }
+
+  body.light-theme input,
+  body.light-theme button {
+    border-color: rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  /* ------------------------------ */
+  /* 1. Шапка (регион, темп, погода) */
+  /* ------------------------------ */
+  .header-block {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+
+  .region-name {
+    flex: 1;
+    min-width: 160px;
+  }
+
+  #regionText {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    padding: 8px 12px;
+    width: 90%;
+    font-size: 16px;
+    transition: all 0.3s ease;
+  }
+
+  #regionText:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+  }
+
+  .weather-temperature-block {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .weather-conditions {
+    width: 100px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .weather-conditions img {
+    width: 80%;
+    height: 80%;
+    object-fit: contain;
+  }
+
+  .current-temperature {
+    font-size: 32px;
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  #weatherConditionsText {
+    font-size: 14px;
+    opacity: 0.9;
+  }
+
+  /* ------------------------------ */
+  /* 2. Прогноз */
+  /* ------------------------------ */
+  .forecast-container {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    padding: 10px 0;
+  }
+
+  .forecast-item {
+    flex: 0 0 80px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .forecast-time {
+    font-size: 14px;
+    opacity: 0.8;
+  }
+
+  .forecast-temp {
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  /* Контейнер для прогноза на сутки */
+  #short-term-forecast {
+    display: flex;
+    justify-content: space-between;
+    /* Равномерное распределение элементов */
+    gap: 10px;
+    /* Отступ между элементами */
+    padding: 10px;
+    background: rgba(255, 255, 255, 0);
+    border-radius: 10px;
+  }
+
+  /* Элемент прогноза на сутки */
+  .forecast-day-item {
+    flex: 1;
+    /* Равномерное распределение ширины */
+    text-align: center;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0);
+    border-radius: 8px;
+  }
+
+  /* Контейнер для прогноза на неделю */
+  #long-term-forecast {
+    display: flex;
+    justify-content: space-between;
+    /* Равномерное распределение элементов */
+    gap: 10px;
+    /* Отступ между элементами */
+    padding: 10px;
+    background: rgba(255, 255, 255, 0);
+    border-radius: 10px;
+  }
+
+  /* Элемент прогноза на неделю */
+  .forecast-week-item {
+    flex: 1;
+    /* Равномерное распределение ширины */
+    text-align: center;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0);
+    border-radius: 8px;
+  }
+
+  .forecast-date {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+
+  .forecast-icon img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .forecast-temp {
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 8px;
+  }
+
+  .weather-icon {
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+    transition: all 0.3s ease;
+  }
+
+  /* ------------------------------ */
+  /* 3. Блоки с дополнительной инфой */
+  /* ------------------------------ */
+  .info-blocks {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+  }
+
+  .box {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 15px;
+  }
+
+  .box h3 {
+    margin: 0 0 10px 0;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* ------------------------------ */
+  /* 4. Кнопки */
+  /* ------------------------------ */
+
+
+  .forecast-buttons {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  /* Универсальный стиль для всех кнопок и file-input-wrapper */
+  .forecast-buttons button,
+  .forecast-buttons .file-input-wrapper {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    border-radius: 5px;
+    padding: 8px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    backdrop-filter: blur(5px);
+  }
+
+  /* Стиль для активной кнопки */
+  .forecast-buttons button.active,
+  .forecast-buttons .file-input-wrapper.active {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+
+  /* Стиль при наведении */
+  .forecast-buttons button:hover,
+  .forecast-buttons .file-input-wrapper:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+  }
+
+  /* Стиль для иконок внутри кнопок */
+  .forecast-buttons button svg,
+  .forecast-buttons .file-input-wrapper svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+  }
+
+  .forecast-buttons .file-input-wrapper label {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+  }
+
+  /* Скрываем input */
+  .forecast-buttons .file-input-wrapper input {
+    display: none;
+  }
+
+  #resetBgButton {
+    padding: 8px 12px;
+    gap: 6px;
+    display: flex;
+    align-items: center;
+  }
+
+  #resetBgButton svg {
+    fill: currentColor;
+  }
+
+  #bgImageInput {
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    height: 0;
+    width: 0;
+    pointer-events: none;
+  }
+
+  .loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 30px;
+  }
+
+  body.light-theme .dot {
+    background-color: #333;
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    margin: 0 5px;
+    background-color:
+      #d8d8d8;
+    border-radius: 50%;
+    animation: blink 1.4s infinite both;
+  }
+
+  .dot:nth-child(1) {
+    animation-delay: -0.32s;
+  }
+
+  .dot:nth-child(2) {
+    animation-delay: -0.16s;
+  }
+
+  @keyframes blink {
+
+    0%,
+    80%,
+    100% {
+      opacity: 0;
+    }
+
+    40% {
+      opacity: 1;
+    }
+  }
+
+  /* ------------------------------ */
+  /* 5. График исторических данных */
+  /* ------------------------------ */
+  .chart-container {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 15px;
+  }
+
+  /* Анимация для загрузки */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .weather-app {
+    animation: fadeIn 1s ease-out;
+  }
