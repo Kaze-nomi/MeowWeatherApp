@@ -343,11 +343,11 @@ const appWeatherApp = (containerId, params = {}) => {
             }
             const data = await response.json();
             historyData = data.daily;
+            renderChart(historyData);
         } catch (error) {
             console.error(error);
             alert('Не удалось получить исторические данные.');
         }
-        renderChart(historyData);
     }
 
     function renderChart(dailyData) {
