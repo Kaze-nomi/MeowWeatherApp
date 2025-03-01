@@ -3,6 +3,7 @@ const appWeatherApp = (containerId, params = {}) => {
     let historyChart;
     let latitude = 55.7512;
     let longitude = 37.6184;
+    let history_flag = false;
 
     // -----------------------------
     // 1. Настройки для погоды
@@ -32,6 +33,10 @@ const appWeatherApp = (containerId, params = {}) => {
     }
 
     function updateUI(currentData, forecastData) {
+        // Смена координат
+        longitude = currentData.coord.lon;
+        latitude = currentData.coord.lat;
+
         // Температура, описание
         const temperature = Math.round(currentData.main.temp);
         document.getElementById('tempValue').textContent = (temperature > 0 ? '+' : '') + temperature + "°C";
@@ -39,14 +44,18 @@ const appWeatherApp = (containerId, params = {}) => {
         document.getElementById('weatherConditionsText').textContent = conditions.charAt(0).toUpperCase() + conditions.slice(1);
 
         document.getElementById('activity-recommendations').style.display = "none";
-        document.getElementById('historyChart').style.display = "none";
-        
+
         document.getElementById('loading').style.display = "flex";
 
-        const loadingElement = document.getElementById('loading-h');
-        loadingElement.style.display = "flex";
-        loadingElement.style.justifyContent = "center";
-        loadingElement.style.alignItems = "center";
+
+        if (!history_flag) {
+            document.getElementById('historyChart').style.display = "none";
+
+            const loadingElement = document.getElementById('loading-h');
+            loadingElement.style.display = "flex";
+            loadingElement.style.justifyContent = "center";
+            loadingElement.style.alignItems = "center";
+        }
 
         // Устанавливаем GIF по погоде
         const weatherID = currentData.weather[0].id;
@@ -121,6 +130,12 @@ const appWeatherApp = (containerId, params = {}) => {
         // Рекомендации
         getRecommendation(currentData, forecastData);
 
+        // История
+        const chartContainer = document.getElementById('chart-container');
+        if (chartContainer.style.display === 'block') {
+            fetchHistoricalData();
+        }
+
         // Краткосрочный прогноз (берём первые 8 записей)
         const list = forecastData.list.slice(0, 8);
         const forecastContainer = document.getElementById('short-term-forecast');
@@ -168,23 +183,28 @@ const appWeatherApp = (containerId, params = {}) => {
             `;
             weekForecastContainer.appendChild(forecastItem);
         });
-
-        longitude = currentData.coord.lon;
-        latitude = currentData.coord.lat;
     }
 
-    async function loadWeatherData(city) {
-        try {
-            const [currentData, forecastData] = await Promise.all([
-                fetchCurrentWeather(city),
-                fetchHourlyForecast(city)
-            ]);
-            updateUI(currentData, forecastData);
-            fetchHistoricalData();
-        } catch (err) {
-            console.error(err);
-            alert('Не удалось загрузить погоду. Проверьте название города или API-ключ.');
-        }
+    function loadWeatherData(city) {
+        history_flag = false;
+        weatherDataPromise = new Promise(async (resolve, reject) => {
+            try {
+                const currentData = await fetchCurrentWeather(city);
+                const forecastData = await fetchHourlyForecast(city);
+                resolve({ currentData, forecastData });
+            } catch (err) {
+                reject(err);
+            }
+        });
+    
+        weatherDataPromise
+            .then(({ currentData, forecastData }) => {
+                updateUI(currentData, forecastData);
+            })
+            .catch((err) => {
+                console.error(err);
+                alert('Не удалось загрузить погоду. Проверьте название города или API-ключ.');
+            });
     }
 
     // -----------------------------
@@ -306,6 +326,7 @@ const appWeatherApp = (containerId, params = {}) => {
             forecastShortContainer.style.display = 'none';
             chartContainer.style.display = 'block';
             chartContainer.style.background = 'rgba(255, 255, 255, 0)';
+            fetchHistoricalData();
         }
     });
 
@@ -322,10 +343,17 @@ const appWeatherApp = (containerId, params = {}) => {
 
 
     async function fetchHistoricalData() {
+        if (history_flag) {
+            return;
+        }
+        else {
+            history_flag = true;
+        }
         const now = new Date();
+        now.setDate(now.getDate() - 1);
         const year = now.getFullYear();
         const month = String(now.getMonth() + 1).padStart(2, '0');
-        const day = String(now.getDate() - 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
 
         const startYear = year - 40;
         const start_date = `${startYear}-${month}-${day}`;
@@ -435,23 +463,31 @@ const appWeatherApp = (containerId, params = {}) => {
     async function getRecommendation(currentData, forecastData) {
         let GigaChatKey = '';
         try {
-            const response = await axios.post('http://localhost:3001/proxy/oauth');
-            GigaChatKey = response.data.access_token;
+            const response = await fetch('http://localhost:3001/proxy/oauth', { method: 'POST' });
+            const data = await response.json();
+            GigaChatKey = data.access_token;
         } catch (error) {
-            console.error('Error:', error.response.data || error.message);
+            console.error('Error:', error.message);
         }
 
         try {
-            const response = await axios.post('http://localhost:3001/proxy/gpt', {
-                GigaChatKey,
-                currentData,
-                forecastData
+            const response = await fetch('http://localhost:3001/proxy/gpt', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    GigaChatKey,
+                    currentData,
+                    forecastData
+                })
             });
+            const data = await response.json();
             document.getElementById('loading').style.display = "none";
             document.getElementById('activity-recommendations').style.display = "block";
-            document.getElementById('activity-recommendations').textContent = await response.data.choices[0].message.content;
+            document.getElementById('activity-recommendations').textContent = data.choices[0].message.content;
         } catch (error) {
-            console.error('Error:', error.response ? error.response.data : error.message);
+            console.error('Error:', error.message);
         }
     }
 
