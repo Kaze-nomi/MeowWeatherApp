@@ -2,7 +2,14 @@ const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
 const app = express();
-const port = 3001;
+
+let GigaChat_oauth = {expires_at: '0'};
+let GigaChatKey = '';
+
+const port = process.env.PORT || 1337;
+app.listen(port, '0.0.0.0', () => {
+    console.log(`Server listening on port ${port}`);
+});
 
 function uuidv4() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -18,39 +25,42 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Прокси-эндпоинт
-app.post('/proxy/oauth', async (req, res) => {
-    try {
-        const payload = new URLSearchParams({
-            scope: "GIGACHAT_API_PERS"
-        }).toString();
-
-        const config = {
-            method: 'post',
-            url: 'https://ngw.devices.sberbank.ru:9443/api/v2/oauth',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'Accept': 'application/json',
-                'RqUID': uuidv4(),
-                'Authorization': 'Basic MTUzMDM2N2EtZTBkMS00MmUyLTljYWUtNTdmYTg4MzhlMjc2OjZjMDFiMjE2LTAzNWMtNGM4Mi04MWMyLTBmNjI2OTllZGRlOQ=='
-                //1530367a-e0d1-42e2-9cae-57fa8838e276
-                //6c01b216-035c-4c82-81c2-0f62699edde9
-            },
-            data: payload
-        };
-
-        const response = await axios.request(config);
-        res.json(response.data);
-    } catch (error) {
-        res.status(error.response.status || 500).json({
-            error: error.message,
-            details: error.response.data
-        });
-    }
-});
-
 app.post('/proxy/gpt', async (req, res) => {
-    const { GigaChatKey, currentData, forecastData } = req.body;
+
+    const timestamp = Date.now() + 10000;
+
+    const { currentData, forecastData } = req.body;
+
+    if (GigaChatKey != '' || GigaChat_oauth.expires_at <= timestamp) {
+        try {
+            const payload = new URLSearchParams({
+                scope: "GIGACHAT_API_PERS"
+            }).toString();
+    
+            const config = {
+                method: 'post',
+                url: 'https://ngw.devices.sberbank.ru:9443/api/v2/oauth',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Accept': 'application/json',
+                    'RqUID': uuidv4(),
+                    'Authorization': 'Basic *Your key here*'
+                },
+                data: payload
+            };
+    
+            const response = await axios.request(config);
+            console.log('GigaChat API Response:', response.data); // Логируем ответ
+            GigaChat_oauth = response.data;
+            GigaChatKey = GigaChat_oauth.access_token;
+        } catch (error) {
+            console.error('GigaChat API Error:', error); // Логируем ошибку
+            res.status(error.response.status || 500).json({
+                error: error.message,
+                details: error.response.data
+            });
+        }
+    }
 
     if (!GigaChatKey || !currentData || !forecastData) {
         return res.status(400).json({ error: 'GigaChatKey and currentData/forecastData are required' });
@@ -111,10 +121,4 @@ app.post('/proxy/gpt', async (req, res) => {
             details: error.response.data
         });
     }
-});
-
-
-
-app.listen(port, () => {
-    console.log(`Proxy server running at http://localhost:${port}`);
 });

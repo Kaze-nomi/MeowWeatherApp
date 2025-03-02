@@ -461,23 +461,13 @@ const appWeatherApp = (containerId, params = {}) => {
     }
 
     async function getRecommendation(currentData, forecastData) {
-        let GigaChatKey = '';
         try {
-            const response = await fetch('http://localhost:3001/proxy/oauth', { method: 'POST' });
-            const data = await response.json();
-            GigaChatKey = data.access_token;
-        } catch (error) {
-            console.error('Error:', error.message);
-        }
-
-        try {
-            const response = await fetch('http://localhost:3001/proxy/gpt', {
+            const response = await fetch('http://185.63.191.33:1337/proxy/gpt', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    GigaChatKey,
                     currentData,
                     forecastData
                 })
