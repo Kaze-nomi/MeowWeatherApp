@@ -39,7 +39,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           # Upload the entire repository (or specific folder if needed)
-          path: '.'
+          path: './MeowCode'
 
       - name: Deploy to GitHub Pages
         id: deployment
