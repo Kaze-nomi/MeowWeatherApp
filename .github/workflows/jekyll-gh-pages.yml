@@ -30,6 +30,10 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup Pages
         uses: actions/configure-pages@v5
+      - name: Create symlink for meow.html
+        run: |
+          cd MeowCode
+          ln -s meow.html index.html
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
         with:
