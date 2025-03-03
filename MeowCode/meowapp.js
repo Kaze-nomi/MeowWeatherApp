@@ -123,6 +123,9 @@ const appWeatherApp = (containerId, params = {}) => {
 
         weatherGIF.src = `img/${svgFile}`;
 
+        const favicon = document.getElementById('favicon');
+        favicon.href = `img/${svgFile}`;
+
         // Дополнительно: ветер, влажность
         document.getElementById('windValue').textContent = currentData.wind.speed.toFixed(1);
         document.getElementById('humidityValue').textContent = currentData.main.humidity;
