@@ -44,7 +44,9 @@ app.post('/proxy/gpt', async (req, res) => {
                     'Content-Type': 'application/x-www-form-urlencoded',
                     'Accept': 'application/json',
                     'RqUID': uuidv4(),
-                    'Authorization': 'Basic *Your key here*'
+                    'Authorization': 'Basic MTUzMDM2N2EtZTBkMS00MmUyLTljYWUtNTdmYTg4MzhlMjc2OjZjMDFiMjE2LTAzNWMtNGM4Mi04MWMyLTBmNjI2OTllZGRlOQ=='
+                    //1530367a-e0d1-42e2-9cae-57fa8838e276
+                    //6c01b216-035c-4c82-81c2-0f62699edde9
                 },
                 data: payload
             };

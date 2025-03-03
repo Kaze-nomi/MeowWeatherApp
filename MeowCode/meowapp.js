@@ -462,7 +462,7 @@ const appWeatherApp = (containerId, params = {}) => {
 
     async function getRecommendation(currentData, forecastData) {
         try {
-            const response = await fetch('http://185.63.191.33:1337/proxy/gpt', {
+            const response = await fetch('https://aabobkov.fvds.ru/proxy/gpt', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
