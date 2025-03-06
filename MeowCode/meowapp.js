@@ -9,7 +9,7 @@ const appWeatherApp = (containerId, params = {}) => {
     // 1. Настройки для погоды
     // -----------------------------
     const API_KEY = '5b4600a0cdd0d6e1d0f075e40c77c1dc'; // API ключ OpenWeatherMap
-    const DEFAULT_CITY = 'Москва';  // Начальный город
+    let CITY = 'Москва';  // Начальный город
 
     // -----------------------------
     // 2. Функции для погоды
@@ -91,7 +91,7 @@ const appWeatherApp = (containerId, params = {}) => {
                     case 701: svgFile = `mist${iconSuffix === 'day' ? '-day' : '-night'}.svg`; break;
                     case 711: svgFile = 'smoke.svg'; break;
                     case 721: svgFile = `haze${iconSuffix === 'day' ? '-day' : '-night'}.svg`; break;
-                    case 731:
+                    case 731: svgFile = 'dust.svg'; break;
                     case 761: svgFile = 'dust.svg'; break;
                     case 741: svgFile = `fog${iconSuffix === 'day' ? '-day' : '-night'}.svg`; break;
                     case 751: svgFile = 'sand.svg'; break;
@@ -203,10 +203,11 @@ const appWeatherApp = (containerId, params = {}) => {
         weatherDataPromise
             .then(({ currentData, forecastData }) => {
                 updateUI(currentData, forecastData);
+                CITY = city;
             })
             .catch((err) => {
                 console.error(err);
-                alert('Не удалось загрузить погоду. Проверьте название города или API-ключ.');
+                alert('Не удалось загрузить погоду. Проверьте название города.');
             });
     }
 
@@ -294,7 +295,7 @@ const appWeatherApp = (containerId, params = {}) => {
     document.getElementById('regionText').addEventListener('keydown', function (event) {
         if (event.key === 'Enter') {
             const newCity = this.value.trim();
-            if (newCity) {
+            if (newCity !== CITY) {
                 loadWeatherData(newCity);
             }
         }
@@ -484,20 +485,10 @@ const appWeatherApp = (containerId, params = {}) => {
         }
     }
 
-    function addCssFile(href) {
-        if (!href) {
-            const link = document.createElement('link');
-            link.rel = 'stylesheet';
-            link.href = href;
-            document.head.appendChild(link);
-        }
-    }
-    
     // Инициализация
     try {
-        addCssFile(null);
         restoreBackgroundImage();
-        loadWeatherData(DEFAULT_CITY);
+        loadWeatherData(CITY);
     } catch (error) {   
         console.error("Ошибка при загрузке страницы:", error);
     }
