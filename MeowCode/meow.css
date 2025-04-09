@@ -75,12 +75,6 @@ body {
     backdrop-filter: blur(5px);
   }
 
-  body.light-theme input,
-  body.light-theme button {
-    border-color: rgba(0, 0, 0, 0.2);
-    background: rgba(0, 0, 0, 0.05);
-  }
-
   /* ------------------------------ */
   /* 1. Шапка (регион, темп, погода) */
   /* ------------------------------ */
@@ -123,6 +117,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+    transition: all 0.3s ease;
   }
 
   .weather-conditions img {
@@ -234,11 +230,6 @@ body {
     font-size: 16px;
     font-weight: bold;
     margin-top: 8px;
-  }
-
-  .weather-icon {
-    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
-    transition: all 0.3s ease;
   }
 
   /* ------------------------------ */
@@ -365,8 +356,7 @@ body {
     width: 10px;
     height: 10px;
     margin: 0 5px;
-    background-color:
-      #d8d8d8;
+    background-color:#d8d8d8;
     border-radius: 50%;
     animation: blink 1.4s infinite both;
   }

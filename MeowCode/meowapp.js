@@ -1,4 +1,4 @@
-const appWeatherApp = (containerId, params = {}) => {
+function WeatherApp () {
     let historyData;
     let historyChart;
     let latitude = 55.7512;
@@ -202,6 +202,9 @@ const appWeatherApp = (containerId, params = {}) => {
     
         weatherDataPromise
             .then(({ currentData, forecastData }) => {
+                if (/\d/.test(city)) {
+                    throw new Error('Некорректное название города');
+                }
                 updateUI(currentData, forecastData);
                 CITY = city;
             })
